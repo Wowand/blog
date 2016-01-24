@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Graph</title>
+	<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+</head>
+<body>
+
+	<div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+	</div>
+<script type="text/javascript">
+        var byweek = {};
+
+
+        $.get('/receipt').then(handleResponse).then(drawGraph);
+
+        function handleResponse(response) {
+            return response.map(groupweek);
+        }
+
+        function groupweek(value, index, array) {
+            var d = new Date(value['date']);
+            d = Math.floor(d.getTime()/(1000*60*60*24*7));
+            byweek[d]=byweek[d]||[];
+            byweek[d].push(value);
+        }
+
+        function drawGraph() {
+            var data = [];
+            var i = 0;
+            $.each(byweek, function(index, value) {
+                data.push({name : 'week' + ++i,
+                            y : value.length})
+            })
+            $('#container').highcharts({
+        		chart: {
+        		    plotBackgroundColor: null,
+            		plotBorderWidth: null,
+        	    	plotShadow: false,
+            		type: 'pie'
+        		},
+        		title: {
+            		text: 'Кількість чеків'
+        		},
+        		tooltip: {
+            		pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        		},
+        		plotOptions: {
+            		pie: {
+                		allowPointSelect: true,
+                		cursor: 'pointer',
+
+                	dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    		}
+                		}
+            		}
+        		},
+        		series: [{
+            		name: 'Weeks',
+            		colorByPoint: true,
+            		data: data
+        		}]
+    		});
+        }
+
+
+	</script>
+</body>
+</html>

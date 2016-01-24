@@ -14,6 +14,11 @@ urlpatterns = [
     url(r'^things/(?P<slug>[-\w]+)/$',
         things_details,
         name='things_detail'),
+    url(r'^things/(?P<slug>[-\w]+)/edit/$',
+        edit_thing,
+        name='edit_thing'),
+    url(r'^graph/$',
+        TemplateView.as_view(template_name='graph.html')),
     url(r'^receipt/$', get_receipts, name='get_receipts'),
     url(r'^admin/', admin.site.urls),
 ]
