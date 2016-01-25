@@ -6,3 +6,4 @@ class ThingForm(ModelForm):
     class Meta:
         model = Thing
         fields = ('name', 'description',)
+
